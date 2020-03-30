@@ -1,5 +1,4 @@
-# Project 1 
-Homework 1 - LL(1) Calculator Parser - Translator to Java
+# LL(1) Calculator Parser - Translator to Java
 ### Part 1
 
 For the first part of this homework you should implement a simple calculator. The calculator should accept expressions with the bitwise AND(&) and XOR(^) operators, as well as parentheses. The grammar (for single-digit numbers) is summarized in:
