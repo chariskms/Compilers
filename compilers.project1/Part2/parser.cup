@@ -1,0 +1,120 @@
+
+import java_cup.runtime.*;
+
+
+parser code {:
+    
+    Scanner s;
+    Parser(Scanner s){ this.s=s; }
+:}
+
+scan with {: return s.next_token(); :};
+
+
+
+terminal            LPAREN, RPAREN, FUNCTOK, RBRACKET, PLUS, COMMA, IF, ELSE, PREFIX, SUFFIX;
+terminal String     STRING_LITERAL, ID, IDLIST;        // our scanner provides numbers as strings
+
+
+non terminal            Rdecl, Rcall, START, decl, dargs, thirdId, call, cargs, cargs2, callForArgs, dargs2, cond, condBlock, inCond;
+non terminal String    expr;      // used to store evaluated subexpressions
+
+
+precedence left PLUS;
+
+
+
+START ::= Rdecl:rd Rcall:rc {: System.out.println("public static void main(String[] args ){" + rc + "}" + rd); :}
+
+;
+Rdecl ::= Rdecl:rd decl:d {: RESULT = ""+ rd + d ; :}
+	| decl:d1 {: RESULT = "" + d1 ; :}
+	
+;
+
+Rcall ::= Rcall:rc call:c {: RESULT = ""+ rc + c ; :}
+        | call:c1 {: RESULT = "" + c1 ; :}
+
+;
+
+
+
+/*
+START	::= START decl:d		{: System.out.println(d) ;:}
+	| decl:d			{: System.out.println(d); :}
+	| START call:c			{: System.out.println(c); :}
+	| call:c 			{: System.out.println("public static void main(String[] args ){" + c); :}
+;
+*/
+
+
+call 	::= ID:il LPAREN cargs:c RPAREN {:RESULT = " System.out.println(" + il +  "(" + c + "));"; :}
+;  
+
+
+cargs   ::= cargs2:c1 COMMA STRING_LITERAL:c2 {: RESULT = c1 + ", " + "\"" + c2 + "\"";  :}
+	|  cargs2:cf1 COMMA callForArgs:cf2 {: RESULT = cf1 + ", " + cf2;  :}
+	|  cargs2:cid1 COMMA ID:id2 {: RESULT = cid1 + ", " + id2;  :} 
+	| STRING_LITERAL:str {: RESULT = "\"" + str + "\"";  :}
+	| callForArgs:cfa {: RESULT = cfa; :}
+	| ID:id3                            {: RESULT = id3; :}
+	| {: RESULT = ""; :}
+;
+
+
+cargs2   ::= cargs2:c1 COMMA STRING_LITERAL:c2 {: RESULT = c1 + ", " + "\"" + c2 + "\"";  :}
+	 | cargs2:cf1 COMMA callForArgs:cf2 {: RESULT = cf1 + ", " + cf2;  :}
+	 | cargs2:cid1 COMMA ID:id2 {: RESULT = cid1 + ", " + id2;  :}  
+	 | STRING_LITERAL:str {: RESULT = "\"" + str + "\"";  :}
+         | callForArgs:c {: RESULT = c; :}
+//	 | ID:id4                   {: RESULT = id4; :}
+;
+
+
+callForArgs	::= ID:id LPAREN cargs:c RPAREN {:RESULT = id + "("+ c +")"; :}
+;
+
+decl	::= ID:id LPAREN dargs:d FUNCTOK expr:e RBRACKET {: RESULT = " public static String " + id +"(" + d + ") { " + e + " }"; :}
+;
+
+expr    ::=     ID:id1 PLUS ID:id2 thirdId:id3            {: RESULT = "return " + id1 + " + " + id2 + id3 + ";"; :}
+        |       STRING_LITERAL:s                    {: RESULT = "return " + "\"" + s + "\"" + ";";  :}
+	|	cond:c				   {: RESULT = " " +  c; :} 
+;
+
+//      |       ID:id3                              {: RESULT = id3; :}
+
+cond 	::= IF LPAREN inCond:ic RPAREN  condBlock:c1 ELSE condBlock:c2 {: RESULT = "if(" + ic + "){" + c1 + "}else{" + c2 + "}" ; :}
+
+;
+
+inCond  ::= ID:id PREFIX STRING_LITERAL:str {: RESULT = id + ".startsWith(" + "\"" + str + "\"" +")"; :} 
+	| STRING_LITERAL:str2 PREFIX ID:id2 {: RESULT = "\"" + str2 + "\"" + ".startsWith(" + id2 + ")"; :}
+	| ID:id3 SUFFIX STRING_LITERAL:str3 {: RESULT = id3 + ".endsWith(" + "\"" + str3 + "\"" +")"; :}
+	| STRING_LITERAL:str4 SUFFIX ID:id4 {: RESULT = "\"" + str4 + "\"" + ".endsWith(" + id4 + ")"; :}
+;
+
+condBlock ::= cond:co		 {: RESULT = co; :}
+	  |   callForArgs:cfa    {: RESULT = "return " + cfa + ";"; :}
+	  |   STRING_LITERAL:str {: RESULT = "return " + "\"" + str + "\"" + ";";  :}
+	  |   ID:id3                              {: RESULT = "return " + id3 + ";" ;  :}
+;
+
+
+thirdId ::= thirdId:t PLUS ID:id {: RESULT = t + " + " + id; :}
+	|	{: RESULT = ""; :}
+; 
+
+
+dargs	::= dargs2:d COMMA ID:id {: RESULT = d + ", String " + id; :}
+	| ID:id {: RESULT = " String " + id; :}
+	| {: RESULT = ""; :}
+;
+
+dargs2  ::= dargs2:d COMMA ID:id {: RESULT = d + ", String " + id; :}
+        | ID:id {: RESULT = " String " + id; :}
+;
+
+
+
+
