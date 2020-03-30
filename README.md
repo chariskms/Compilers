@@ -3,4 +3,4 @@ Implementation of a LL1 parser for a simple calculator and a translator to Java 
 
 1. Project 1 
 1. Project 2 
-1. Project 3
+1. Project 3    Generating intermediate code (MiniJava -> LLVM)
