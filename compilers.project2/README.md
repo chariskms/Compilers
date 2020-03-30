@@ -1,4 +1,4 @@
-# MiniJava Static Checking (Semantic Analysis)
+# MiniJava Static Checking | Semantic Analysis
 
 This homework introduces your semester project, which consists of building a compiler for MiniJava, a subset of Java. MiniJava is designed so that its programs can be compiled by a full Java compiler like javac.
 
