@@ -1,4 +1,5 @@
-# Generating intermediate code (MiniJava -> LLVM)
+# Generating intermediate code 
+## MiniJava -> LLVM
 
 In this part of the project you have to write visitors that convert MiniJava code into the intermediate representation used by the LLVM compiler project. The MiniJava language is the same as in the previous exercise. The LLVM language is documented in the LLVM Language Reference Manual, although you will use only a subset of the instructions.
 Types
