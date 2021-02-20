@@ -8,6 +8,4 @@ Includes:
 - Semantic_Check(MiniJava): MiniJava Static Checking (Semantic Analysis)
 - LLVM(MiniJava): Generating intermediate code (MiniJava -> LLVM)
 
-[MiniJava grammar in BNF](Compilers/BNF%20for%20minijava.html)
-
 
